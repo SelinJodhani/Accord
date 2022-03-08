@@ -1,0 +1,29 @@
+{
+    "name": "accord",
+    "version": "1.0.0",
+    "description": "Discord clone made using node, express.",
+    "main": "index.js",
+    "scripts": {
+        "start": "nodemon server.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/SelinJodhani/Accord.git"
+    },
+    "author": "Selin Jodhani",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/SelinJodhani/Accord/issues"
+    },
+    "homepage": "https://github.com/SelinJodhani/Accord#readme",
+    "dependencies": {
+        "express": "^4.17.3",
+        "mongoose": "^6.2.4",
+        "validator": "^13.7.0"
+    },
+    "devDependencies": {
+        "dotenv": "^16.0.0",
+        "morgan": "^1.10.0",
+        "nodemon": "^2.0.15"
+    }
+}
