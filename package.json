@@ -17,8 +17,11 @@
     },
     "homepage": "https://github.com/SelinJodhani/Accord#readme",
     "dependencies": {
+        "bcrypt": "^5.0.1",
         "express": "^4.17.3",
+        "jsonwebtoken": "^8.5.1",
         "mongoose": "^6.2.4",
+        "nodemailer": "^6.7.2",
         "validator": "^13.7.0"
     },
     "devDependencies": {
