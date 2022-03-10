@@ -28,9 +28,22 @@ const userSchema = new mongoose.Schema(
     passwordConfirm: {
       type: String,
       required: [true, 'Confirm password is required!'],
-      validate: function (passwordConfirm) {
-        return this.password === passwordConfirm;
+      validate: {
+        validator: function (passwordConfirm) {
+          return this.password === passwordConfirm;
+        },
+        message: 'Password does not match!',
       },
+    },
+    servers: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Server',
+      },
+    ],
+    createdAt: {
+      type: Date,
+      default: Date.now,
     },
     passwordChangedAt: Date,
     passwordResetToken: String,
