@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const { promisify } = require('util');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -29,13 +30,13 @@ const authController = {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return next(new Error('Email and password is must!'));
+      return next(new AppError('Please provide your email and password!', 401));
     }
 
     const user = await User.findOne({ email }).select('+password');
 
     if (!user || !(await user.correctPassword(password, user.password))) {
-      return next(new Error('Incorrect email or password'));
+      return next(new AppError('Incorrect email or password!', 401));
     }
 
     createSendToken(user, res, 200);
@@ -63,7 +64,7 @@ const authController = {
 
     if (!token) {
       return next(
-        new Error('You are not logged in! Please log in to get access.')
+        new AppError('You are not logged in! Please log in to get access.', 401)
       );
     }
 
@@ -72,13 +73,19 @@ const authController = {
     const currentUser = await User.findById(decoded.id);
     if (!currentUser) {
       return next(
-        new Error('The user belonging to this token does no longer exist.')
+        new AppError(
+          'The user belonging to this token does no longer exist.',
+          401
+        )
       );
     }
 
     if (currentUser.changedPasswordAfter(decoded.iat)) {
       return next(
-        new Error('User recently changed password! Please log in again.')
+        new AppError(
+          'User recently changed password! Please log in again.',
+          401
+        )
       );
     }
 
@@ -92,7 +99,7 @@ const authController = {
     if (
       !(await user.correctPassword(req.body.passwordCurrent, user.password))
     ) {
-      return next(new Error('Your current password is wrong.'));
+      return next(new AppError('Your current password is wrong.', 401));
     }
 
     user.password = req.body.password;
@@ -105,7 +112,9 @@ const authController = {
   forgotPassword: catchAsync(async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      return next(new Error('There is no user with email address.'));
+      return next(
+        new AppError(`There is no user with email: ${req.body.email}`, 401)
+      );
     }
 
     const resetToken = user.createPasswordResetToken();
@@ -134,7 +143,10 @@ const authController = {
       await user.save({ validateBeforeSave: false });
 
       return next(
-        new Error('There was an error sending the email. Try again later!')
+        new AppError(
+          'There was an error sending the email. Try again later!',
+          400
+        )
       );
     }
   }),
@@ -151,7 +163,7 @@ const authController = {
     });
 
     if (!user) {
-      return next(new Error('Token is invalid or has expired'));
+      return next(new AppError('Token is invalid or has expired', 401));
     }
 
     user.password = req.body.password;
