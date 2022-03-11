@@ -10,6 +10,10 @@ const serverSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
+  image: {
+    type: String,
+    default: 'Accord.png',
+  },
   author: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',

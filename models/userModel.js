@@ -9,6 +9,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Name is required!'],
     },
+    image: {
+      type: String,
+      default: 'Accord.png',
+    },
     email: {
       type: String,
       required: [true, 'Email is required!'],
