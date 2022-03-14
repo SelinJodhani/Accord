@@ -28,8 +28,32 @@ const upload = multer({
 
 exports.uploadServerImage = upload.single('image');
 
+exports.get = catchAsync(async (req, res, next) => {
+  const server = await Server.find({ slug: req.params.slug });
+
+  if (!server) return next(new AppError('Server does not exist!'));
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      server,
+    },
+  });
+});
+
 exports.all = catchAsync(async (req, res, next) => {
-  const servers = await Server.find();
+  if (!req.query.search) {
+    return next(
+      new AppError(
+        'Please type query in your search box to search for the servers!',
+        400
+      )
+    );
+  }
+
+  const servers = await Server.find({
+    name: { $regex: req.query.search, $options: 'i' },
+  });
 
   res.status(200).json({
     status: 'success',
@@ -40,17 +64,12 @@ exports.all = catchAsync(async (req, res, next) => {
 });
 
 exports.find = catchAsync(async (req, res, next) => {
-  const server = await Server.find({ slug: req.params.slug })
-    .populate({ path: 'author', select: '-servers -createdAt -__v' })
-    .populate({ path: 'users', select: '-servers -createdAt -__v' })
-    .select('-__v');
-
-  if (!server) return next(new AppError('Server does not exist!'));
+  const servers = await Server.find({ users: req.user._id });
 
   res.status(200).json({
     status: 'success',
     data: {
-      server,
+      servers,
     },
   });
 });
@@ -63,14 +82,40 @@ exports.create = catchAsync(async (req, res, next) => {
     author: req.user._id,
   });
 
-  user.servers.push(server._id);
-  user.save({ validateBeforeSave: false });
+  await User.updateOne({ _id: user._id }, { $push: { servers: server._id } });
 
   res.status(201).json({
     status: 'success',
     data: {
       server,
     },
+  });
+});
+
+exports.update = catchAsync(async (req, res, next) => {
+  const server = await Server.findOneAndUpdate(
+    { slug: req.params.slug },
+    { name: req.body.name, image: req.file?.filename },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      server,
+    },
+  });
+});
+
+exports.delete = catchAsync(async (req, res, next) => {
+  await Server.findOneAndDelete({ slug: req.params.slug });
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
   });
 });
 
@@ -83,11 +128,8 @@ exports.join = catchAsync(async (req, res, next) => {
   if (server.users.find(id => id.equals(user._id)))
     return next(new AppError('User alredy exist in this server!', 400));
 
-  server.users.push(user._id);
-  user.servers.push(server._id);
-
-  user.save({ validateBeforeSave: false });
-  server.save({ validateBeforeSave: false });
+  await Server.updateOne({ _id: server._id }, { $push: { users: user._id } });
+  await User.updateOne({ _id: user._id }, { $push: { servers: server._id } });
 
   res.status(200).json({
     status: 'success',
@@ -109,11 +151,8 @@ exports.leave = catchAsync(async (req, res, next) => {
       )
     );
 
-  server.users.splice(server.users.indexOf(user._id), 1);
-  user.servers.splice(user.servers.indexOf(server._id), 1);
-
-  user.save({ validateBeforeSave: false });
-  server.save({ validateBeforeSave: false });
+  await Server.updateOne({ _id: server._id }, { $pull: { users: user._id } });
+  await User.updateOne({ _id: user._id }, { $pull: { servers: server._id } });
 
   res.status(200).json({
     status: 'success',

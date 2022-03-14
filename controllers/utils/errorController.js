@@ -7,7 +7,7 @@ const handleValidationError = err => {
 
 const handleDuplicateKeyError = err => {
   const value = err.message.match(/(["'])(\\?.)*?\1/)[0];
-  const message = 'Email already exist!';
+  const message = `${value}: already exist!`;
   return new AppError(message, 400);
 };
 

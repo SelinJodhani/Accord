@@ -33,8 +33,21 @@ const serverSchema = new mongoose.Schema({
 serverSchema.pre('save', function (next) {
   if (!this.isNew) return next();
 
-  this.slug = slugify(this.name, { lower: true });
+  this.slug = slugify(this.name, { lower: true, strict: true });
   this.users.push(this.author._id);
+  next();
+});
+
+serverSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'author',
+    select: '-servers -createdAt -__v',
+  })
+    .populate({
+      path: 'users',
+      select: '-servers -createdAt -__v',
+    })
+    .select('-__v');
   next();
 });
 
