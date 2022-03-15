@@ -28,6 +28,19 @@ const upload = multer({
 
 exports.uploadServerImage = upload.single('image');
 
+exports.checkServerAuthority = catchAsync(async (req, res, next) => {
+  const server = await Server.findOne({ slug: req.params.slug });
+
+  if (!server) return next(new AppError('Server does not exist!'));
+
+  if (!req.user._id.equals(server.author._id)) {
+    return next(
+      new AppError('You can only make changes to your own server!', 400)
+    );
+  }
+  next();
+});
+
 exports.get = catchAsync(async (req, res, next) => {
   const server = await Server.find({ slug: req.params.slug });
 

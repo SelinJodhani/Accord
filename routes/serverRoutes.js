@@ -22,9 +22,14 @@ router
   .patch(
     authController.protect,
     serverController.uploadServerImage,
+    serverController.checkServerAuthority,
     serverController.update
   )
-  .delete(authController.protect, serverController.delete);
+  .delete(
+    authController.protect,
+    serverController.checkServerAuthority,
+    serverController.delete
+  );
 
 router.route('/:slug/join').get(authController.protect, serverController.join);
 router
