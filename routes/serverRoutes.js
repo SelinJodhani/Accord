@@ -1,39 +1,30 @@
 const express = require('express');
 
+const channelRoutes = require('../routes/channelRoutes');
 const authController = require('../controllers/authController');
 const serverController = require('../controllers/serverController');
 
 const router = express.Router();
 
-router.route('/all').get(authController.protect, serverController.all);
+router.use(authController.protect);
+router.use('/:serverSlug/channels', channelRoutes);
 
 router
   .route('/')
-  .get(authController.protect, serverController.find)
-  .post(
-    authController.protect,
-    serverController.uploadServerImage,
-    serverController.create
-  );
+  .get(serverController.find)
+  .post(serverController.uploadServerImage, serverController.create);
 
 router
-  .route('/:slug')
-  .get(authController.protect, serverController.get)
+  .route('/:serverSlug')
+  .get(serverController.get)
   .patch(
-    authController.protect,
     serverController.uploadServerImage,
     serverController.checkServerAuthority,
     serverController.update
   )
-  .delete(
-    authController.protect,
-    serverController.checkServerAuthority,
-    serverController.delete
-  );
+  .delete(serverController.checkServerAuthority, serverController.delete);
 
-router.route('/:slug/join').get(authController.protect, serverController.join);
-router
-  .route('/:slug/leave')
-  .get(authController.protect, serverController.leave);
+router.route('/:serverSlug/join').get(serverController.join);
+router.route('/:serverSlug/leave').get(serverController.leave);
 
 module.exports = router;

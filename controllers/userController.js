@@ -59,7 +59,6 @@ exports.update = catchAsync(async (req, res, next) => {
     {
       name: req.body.name,
       image: req.file.filename,
-      email: req.body.email,
     },
     {
       new: true,

@@ -29,7 +29,7 @@ const upload = multer({
 exports.uploadServerImage = upload.single('image');
 
 exports.checkServerAuthority = catchAsync(async (req, res, next) => {
-  const server = await Server.findOne({ slug: req.params.slug });
+  const server = await Server.findOne({ slug: req.params.serverSlug });
 
   if (!server) return next(new AppError('Server does not exist!'));
 
@@ -42,7 +42,7 @@ exports.checkServerAuthority = catchAsync(async (req, res, next) => {
 });
 
 exports.get = catchAsync(async (req, res, next) => {
-  const server = await Server.find({ slug: req.params.slug });
+  const server = await Server.find({ slug: req.params.serverSlug });
 
   if (!server) return next(new AppError('Server does not exist!'));
 
@@ -50,28 +50,6 @@ exports.get = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       server,
-    },
-  });
-});
-
-exports.all = catchAsync(async (req, res, next) => {
-  if (!req.query.search) {
-    return next(
-      new AppError(
-        'Please type query in your search box to search for the servers!',
-        400
-      )
-    );
-  }
-
-  const servers = await Server.find({
-    name: { $regex: req.query.search, $options: 'i' },
-  });
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      servers,
     },
   });
 });
@@ -107,7 +85,7 @@ exports.create = catchAsync(async (req, res, next) => {
 
 exports.update = catchAsync(async (req, res, next) => {
   const server = await Server.findOneAndUpdate(
-    { slug: req.params.slug },
+    { slug: req.params.serverSlug },
     { name: req.body.name, image: req.file?.filename },
     {
       new: true,
@@ -124,7 +102,7 @@ exports.update = catchAsync(async (req, res, next) => {
 });
 
 exports.delete = catchAsync(async (req, res, next) => {
-  await Server.findOneAndDelete({ slug: req.params.slug });
+  await Server.findOneAndDelete({ slug: req.params.serverSlug });
 
   res.status(204).json({
     status: 'success',
@@ -133,7 +111,7 @@ exports.delete = catchAsync(async (req, res, next) => {
 });
 
 exports.join = catchAsync(async (req, res, next) => {
-  const server = await Server.findOne({ slug: req.params.slug });
+  const server = await Server.findOne({ slug: req.params.serverSlug });
   const user = await User.findById(req.user._id);
 
   if (!server) return next(new AppError('Server does not exist!'));
@@ -151,7 +129,7 @@ exports.join = catchAsync(async (req, res, next) => {
 });
 
 exports.leave = catchAsync(async (req, res, next) => {
-  const server = await Server.findOne({ slug: req.params.slug });
+  const server = await Server.findOne({ slug: req.params.serverSlug });
   const user = await User.findById(req.user._id);
 
   if (!server) return next(new AppError('Server does not exist!'));

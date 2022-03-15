@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-const slugify = require('slugify');
+const slug = require('mongoose-slug-updater');
+
+mongoose.plugin(slug);
 
 const serverSchema = new mongoose.Schema({
   name: {
@@ -8,6 +10,7 @@ const serverSchema = new mongoose.Schema({
   },
   slug: {
     type: String,
+    slug: 'name',
     unique: true,
   },
   image: {
@@ -24,6 +27,12 @@ const serverSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
+  channels: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Channel',
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,
@@ -33,7 +42,6 @@ const serverSchema = new mongoose.Schema({
 serverSchema.pre('save', function (next) {
   if (!this.isNew) return next();
 
-  this.slug = slugify(this.name, { lower: true, strict: true });
   this.users.push(this.author._id);
   next();
 });
@@ -46,6 +54,10 @@ serverSchema.pre(/^find/, function (next) {
     .populate({
       path: 'users',
       select: '-servers -createdAt -__v',
+    })
+    .populate({
+      path: 'channels',
+      select: '-server -createdAt -__v ',
     })
     .select('-__v');
   next();
