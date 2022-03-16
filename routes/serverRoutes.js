@@ -1,5 +1,6 @@
 const express = require('express');
 
+const uploadImage = require('../utils/uploadImage')('Server');
 const channelRoutes = require('../routes/channelRoutes');
 const authController = require('../controllers/authController');
 const serverController = require('../controllers/serverController');
@@ -12,13 +13,13 @@ router.use('/:serverSlug/channels', channelRoutes);
 router
   .route('/')
   .get(serverController.find)
-  .post(serverController.uploadServerImage, serverController.create);
+  .post(uploadImage, serverController.create);
 
 router
   .route('/:serverSlug')
   .get(serverController.get)
   .patch(
-    serverController.uploadServerImage,
+    uploadImage,
     serverController.checkServerAuthority,
     serverController.update
   )

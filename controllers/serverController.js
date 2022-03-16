@@ -1,32 +1,10 @@
-const multer = require('multer');
+const fs = require('fs');
 
+const Channel = require('../models/channelModel');
 const Server = require('../models/serverModel');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/images/servers');
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split('/')[1];
-    cb(null, `Server-${req.user._id}-${Date.now()}.${ext}`);
-  },
-});
-
-const multerFilter = (req, file, cb) => {
-  if (!file.mimetype.startsWith('image'))
-    cb(new AppError('Only image file is allowed!', 400), false);
-  cb(null, true);
-};
-
-const upload = multer({
-  storage: multerStorage,
-  fileFilter: multerFilter,
-});
-
-exports.uploadServerImage = upload.single('image');
 
 exports.checkServerAuthority = catchAsync(async (req, res, next) => {
   const server = await Server.findOne({ slug: req.params.serverSlug });
@@ -88,10 +66,15 @@ exports.update = catchAsync(async (req, res, next) => {
     { slug: req.params.serverSlug },
     { name: req.body.name, image: req.file?.filename },
     {
-      new: true,
+      new: false,
       runValidators: true,
     }
   );
+
+  if (server.image !== 'Accord.png')
+    await fs.promises.unlink(
+      `${__dirname}/../public/images/servers/${server.image}`
+    );
 
   res.status(200).json({
     status: 'success',
@@ -102,7 +85,18 @@ exports.update = catchAsync(async (req, res, next) => {
 });
 
 exports.delete = catchAsync(async (req, res, next) => {
-  await Server.findOneAndDelete({ slug: req.params.serverSlug });
+  const server = await Server.findOneAndDelete({ slug: req.params.serverSlug });
+
+  await User.updateMany(
+    { servers: server._id },
+    { $pull: { servers: server._id } }
+  );
+  await Channel.deleteMany({ server: server._id });
+
+  if (server.image !== 'Accord.png')
+    await fs.promises.unlink(
+      `${__dirname}/../public/images/servers/${server.image}`
+    );
 
   res.status(204).json({
     status: 'success',

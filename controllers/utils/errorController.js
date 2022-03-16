@@ -11,6 +11,11 @@ const handleDuplicateKeyError = err => {
   return new AppError(message, 400);
 };
 
+const handleLimitFileSize = err => {
+  const message = 'File Size is too large. Max Allowed file size is 5 mb.';
+  return new AppError(message, 400);
+};
+
 const sendError = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -31,6 +36,7 @@ module.exports = (err, req, res, next) => {
 
   if (error.name === 'ValidationError') error = handleValidationError(error);
   if (error.code === 11000) error = handleDuplicateKeyError(error);
+  if (error.code == 'LIMIT_FILE_SIZE') error = handleLimitFileSize(error);
 
   sendError(error, res);
 };

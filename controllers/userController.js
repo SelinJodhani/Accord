@@ -1,33 +1,6 @@
-const multer = require('multer');
-
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/images/users');
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split('/')[1];
-    cb(null, `User-${req.user._id}-${Date.now()}.${ext}`);
-  },
-});
-
-const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image')) {
-    cb(null, true);
-  } else {
-    cb(new AppError('Only image file is allowed!', 400), false);
-  }
-};
-
-const upload = multer({
-  fileFilter: multerFilter,
-  storage: multerStorage,
-});
-
-exports.uploadUserImage = upload.single('image');
 
 exports.find = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id)
@@ -61,10 +34,15 @@ exports.update = catchAsync(async (req, res, next) => {
       image: req.file.filename,
     },
     {
-      new: true,
+      new: false,
       runValidators: true,
     }
   );
+
+  if (user.image !== 'Accord.png')
+    await fs.promises.unlink(
+      `${__dirname}/../public/images/users/${user.image}`
+    );
 
   res.status(200).json({
     status: 'success',

@@ -1,5 +1,6 @@
 const express = require('express');
 
+const uploadImage = require('../utils/uploadImage')('User');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 
@@ -21,7 +22,7 @@ router.route('/').get(authController.protect, userController.find);
 router.patch(
   '/updateMe',
   authController.protect,
-  userController.uploadUserImage,
+  uploadImage,
   userController.update
 );
 
