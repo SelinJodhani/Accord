@@ -1,13 +1,15 @@
 const express = require('express');
 
-const uploadImage = require('../utils/uploadImage')('Server');
+const uploadImage = require('../middlewares/uploadImageMiddlewares')('Server');
 const channelRoutes = require('../routes/channelRoutes');
-const authController = require('../controllers/authController');
 const serverController = require('../controllers/serverController');
+
+const authMiddlewares = require('../middlewares/authMiddlewares');
+const serverMiddlewares = require('../middlewares/serverMiddlewares');
 
 const router = express.Router();
 
-router.use(authController.protect);
+router.use(authMiddlewares.protect);
 router.use('/:serverSlug/channels', channelRoutes);
 
 router
@@ -20,10 +22,10 @@ router
   .get(serverController.get)
   .patch(
     uploadImage,
-    serverController.checkServerAuthority,
+    serverMiddlewares.checkServerAuthority,
     serverController.update
   )
-  .delete(serverController.checkServerAuthority, serverController.delete);
+  .delete(serverMiddlewares.checkServerAuthority, serverController.delete);
 
 router.route('/:serverSlug/join').get(serverController.join);
 router.route('/:serverSlug/leave').get(serverController.leave);

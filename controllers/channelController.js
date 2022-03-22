@@ -1,4 +1,5 @@
 const Channel = require('../models/channelModel');
+const Message = require('../models/messageModel');
 const Server = require('../models/serverModel');
 const catchAsync = require('../utils/catchAsync');
 
@@ -27,6 +28,7 @@ exports.delete = catchAsync(async (req, res, next) => {
     slug: req.params.channelSlug,
   });
 
+  await Message.deleteMany({ channel: channel._id });
   await Server.updateOne(
     { slug: req.params.serverSlug },
     { $pull: { channels: channel._id } }

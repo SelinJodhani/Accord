@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const app = require('./app');
+const messageController = require('./controllers/messageController');
 
 const server = require('http').Server(app);
 
@@ -25,15 +26,17 @@ mongoose.connect(DATABASE_STRING, () => {
   console.log('Database connection successfull.');
 });
 
-io.on('connection', socket => {
-  socket.emit('connected');
-
+io.on('connect', socket => {
   socket.on('join-channel', channelSlug => {
     socket.join(channelSlug);
   });
 
   socket.on('message', data => {
-    socket.to(data.channelSlug).emit('newMessage', data);
+    delete data.user.servers;
+    delete data.user.createdAt;
+
+    socket.broadcast.to(data.channelSlug).emit('newMessage', data);
+    messageController.save(data);
   });
 });
 

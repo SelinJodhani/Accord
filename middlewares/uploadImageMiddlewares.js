@@ -1,4 +1,5 @@
 const multer = require('multer');
+const AppError = require('../utils/appError');
 
 module.exports = function (model) {
   const multerStorage = multer.diskStorage({

@@ -1,23 +1,11 @@
 const fs = require('fs');
 
 const Channel = require('../models/channelModel');
+const Message = require('../models/messageModel');
 const Server = require('../models/serverModel');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-
-exports.checkServerAuthority = catchAsync(async (req, res, next) => {
-  const server = await Server.findOne({ slug: req.params.serverSlug });
-
-  if (!server) return next(new AppError('Server does not exist!'));
-
-  if (!req.user._id.equals(server.author._id)) {
-    return next(
-      new AppError('You can only make changes to your own server!', 400)
-    );
-  }
-  next();
-});
 
 exports.get = catchAsync(async (req, res, next) => {
   const server = await Server.find({ slug: req.params.serverSlug });
@@ -92,6 +80,7 @@ exports.delete = catchAsync(async (req, res, next) => {
     { $pull: { servers: server._id } }
   );
   await Channel.deleteMany({ server: server._id });
+  await Message.deleteMany({ server: server._id });
 
   if (server.image !== 'Accord.png')
     await fs.promises.unlink(

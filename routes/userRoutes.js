@@ -1,8 +1,10 @@
 const express = require('express');
 
-const uploadImage = require('../utils/uploadImage')('User');
+const uploadImage = require('../middlewares/uploadImageMiddlewares')('User');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
+
+const authMiddlewares = require('../middlewares/authMiddlewares');
 
 const router = express.Router();
 
@@ -12,18 +14,11 @@ router.route('/signup').post(authController.signup);
 router.route('/forgotPassword').post(authController.forgotPassword);
 router.route('/resetPassword/:token').post(authController.resetPassword);
 
-router.patch(
-  '/updatePassword',
-  authController.protect,
-  authController.updatePassword
-);
+router.use(authMiddlewares.protect);
 
-router.route('/').get(authController.protect, userController.find);
-router.patch(
-  '/updateMe',
-  authController.protect,
-  uploadImage,
-  userController.update
-);
+router.patch('/updatePassword', authController.updatePassword);
+
+router.route('/').get(userController.find);
+router.patch('/updateMe', uploadImage, userController.update);
 
 module.exports = router;

@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
+      trim: true,
       required: [true, 'Name is required!'],
     },
     image: {
@@ -18,6 +19,7 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Email is required!'],
       lowercase: true,
       unique: true,
+      trim: true,
       validate: [
         /^[a-z]([a-z]){2}@narola.email/,
         'Only Narola Emails are valid for now!',

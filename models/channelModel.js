@@ -6,6 +6,7 @@ mongoose.plugin(slug);
 const channelSchema = new mongoose.Schema({
   name: {
     type: String,
+    trim: true,
     required: [true, 'Channel name is required!'],
   },
   slug: {
