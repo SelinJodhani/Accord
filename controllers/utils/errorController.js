@@ -1,8 +1,9 @@
 const AppError = require('../../utils/appError');
 
 const handleValidationError = err => {
-  const errors = Object.keys(err.errors).map(e => err.errors[e]);
-  return new AppError('Invalid data!', 400, errors);
+  const errors = Object.values(err.errors).map(el => el.message);
+  const message = `${errors[0]}`;
+  return new AppError(message, 400);
 };
 
 const handleDuplicateKeyError = err => {

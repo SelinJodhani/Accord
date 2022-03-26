@@ -1,3 +1,4 @@
+const fs = require('fs');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
@@ -31,7 +32,7 @@ exports.update = catchAsync(async (req, res, next) => {
     req.user._id,
     {
       name: req.body.name,
-      image: req.file.filename,
+      image: req.file?.filename,
     },
     {
       new: false,

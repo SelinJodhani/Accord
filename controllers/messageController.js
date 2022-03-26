@@ -7,8 +7,8 @@ exports.save = async data => {
   await Message.create({
     message: data.message,
     user: data.user._id,
-    channel: data.channel,
-    server: data.server,
+    channel: data.channelId,
+    server: data.serverId,
     createdAt: data.createdAt,
   });
 };

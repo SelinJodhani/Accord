@@ -38,8 +38,16 @@ exports.create = catchAsync(async (req, res, next) => {
     image: req.file?.filename,
     author: req.user._id,
   });
+  const channel = await Channel.create({
+    name: 'General',
+    server: server._id,
+  });
 
   await User.updateOne({ _id: user._id }, { $push: { servers: server._id } });
+  await Server.updateOne(
+    { _id: server._id },
+    { $push: { channels: channel._id } }
+  );
 
   res.status(201).json({
     status: 'success',
