@@ -1,7 +1,6 @@
-const Channel = require('../models/channelModel');
-const Message = require('../models/messageModel');
-const Server = require('../models/serverModel');
-const catchAsync = require('../utils/catchAsync');
+const Channel = require('../models/Channel');
+const Message = require('../models/Message');
+const catchAsync = require('../utils/catch.async');
 
 exports.save = async data => {
   await Message.create({

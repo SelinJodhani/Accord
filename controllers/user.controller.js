@@ -1,7 +1,8 @@
 const fs = require('fs');
-const User = require('../models/userModel');
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+const createError = require('http-errors');
+
+const User = require('../models/User');
+const catchAsync = require('../utils/catch.async');
 
 exports.find = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id)
@@ -22,7 +23,8 @@ exports.find = catchAsync(async (req, res, next) => {
 exports.update = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(
-      new Error(
+      new createError(
+        400,
         'This route is not for password updates. Please use /updatePassword.'
       )
     );

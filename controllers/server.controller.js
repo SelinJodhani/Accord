@@ -1,11 +1,11 @@
 const fs = require('fs');
 
-const Channel = require('../models/channelModel');
-const Message = require('../models/messageModel');
-const Server = require('../models/serverModel');
-const User = require('../models/userModel');
-const AppError = require('../utils/appError');
-const catchAsync = require('../utils/catchAsync');
+const Channel = require('../models/Channel');
+const Message = require('../models/Message');
+const Server = require('../models/Server');
+const User = require('../models/User');
+const createError = require('http-errors');
+const catchAsync = require('../utils/catch.async');
 
 exports.get = catchAsync(async (req, res, next) => {
   const server = await Server.find({ slug: req.params.serverSlug });
@@ -38,15 +38,25 @@ exports.create = catchAsync(async (req, res, next) => {
     image: req.file?.filename,
     author: req.user._id,
   });
-  const channel = await Channel.create({
-    name: 'General',
-    server: server._id,
-  });
+  const channel = await Channel.create([
+    {
+      name: 'General',
+      type: 'Text',
+      server: server._id,
+    },
+    {
+      name: 'General',
+      type: 'Voice',
+      server: server._id,
+    },
+  ]);
+
+  const data = channel.map(obj => obj._id);
 
   await User.updateOne({ _id: user._id }, { $push: { servers: server._id } });
   await Server.updateOne(
     { _id: server._id },
-    { $push: { channels: channel._id } }
+    { $push: { channels: { $each: data } } }
   );
 
   res.status(201).json({
@@ -105,10 +115,10 @@ exports.join = catchAsync(async (req, res, next) => {
   const server = await Server.findOne({ slug: req.params.serverSlug });
   const user = await User.findById(req.user._id);
 
-  if (!server) return next(new AppError('Server does not exist!'));
+  if (!server) return next(new createError(404, 'Server does not exist!'));
 
   if (server.users.find(id => id.equals(user._id)))
-    return next(new AppError('User alredy exist in this server!', 400));
+    return next(new createError(400, 'User alredy exist in this server!'));
 
   await Server.updateOne({ _id: server._id }, { $push: { users: user._id } });
   await User.updateOne({ _id: user._id }, { $push: { servers: server._id } });
@@ -123,15 +133,18 @@ exports.leave = catchAsync(async (req, res, next) => {
   const server = await Server.findOne({ slug: req.params.serverSlug });
   const user = await User.findById(req.user._id);
 
-  if (!server) return next(new AppError('Server does not exist!'));
+  if (!server) return next(new createError(400, 'Server does not exist!'));
 
   if (!server.users.find(id => id.equals(user._id)))
     return next(
-      new AppError(
-        'Why are you trying to leave a server in which you are not exist!',
-        400
+      new createError(
+        400,
+        'Why are you trying to leave a server in which you are not exist!'
       )
     );
+
+  if (server.author._id.equals(user._id))
+    return next(new createError(400, 'Author cannot leave their own server!'));
 
   await Server.updateOne({ _id: server._id }, { $pull: { users: user._id } });
   await User.updateOne({ _id: user._id }, { $pull: { servers: server._id } });

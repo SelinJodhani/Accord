@@ -1,6 +1,6 @@
-const Server = require('../models/serverModel');
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+const Server = require('../models/Server');
+const catchAsync = require('../utils/catch.async');
+const createError = require('http-errors');
 
 exports.checkServerAuthority = catchAsync(async (req, res, next) => {
   const server = await Server.findOne({ slug: req.params.serverSlug });
@@ -9,7 +9,7 @@ exports.checkServerAuthority = catchAsync(async (req, res, next) => {
 
   if (!req.user._id.equals(server.author._id)) {
     return next(
-      new AppError('You can only make changes to your own server!', 400)
+      new createError(400, 'You can only make changes to your own server!')
     );
   }
   next();

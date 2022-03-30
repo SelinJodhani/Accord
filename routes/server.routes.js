@@ -1,11 +1,13 @@
 const express = require('express');
 
-const uploadImage = require('../middlewares/uploadImageMiddlewares')('Server');
-const channelRoutes = require('../routes/channelRoutes');
-const serverController = require('../controllers/serverController');
+const uploadImage = require('../middlewares/image.upload.middlewares')(
+  'Server'
+);
+const channelRoutes = require('./channel.routes');
+const serverController = require('../controllers/server.controller');
 
-const authMiddlewares = require('../middlewares/authMiddlewares');
-const serverMiddlewares = require('../middlewares/serverMiddlewares');
+const authMiddlewares = require('../middlewares/auth.middlewares');
+const serverMiddlewares = require('../middlewares/server.middlewares');
 
 const router = express.Router();
 

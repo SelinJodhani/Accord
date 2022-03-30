@@ -1,12 +1,13 @@
 const express = require('express');
 
-const messageRoutes = require('../routes/messageRoutes');
-const channelController = require('../controllers/channelController');
-const serverMiddlewares = require('../middlewares/serverMiddlewares');
+const messageRoutes = require('./message.routes');
+const channelController = require('../controllers/channel.controller');
+const serverMiddlewares = require('../middlewares/server.middlewares');
 
 const router = express.Router({ mergeParams: true });
 
 router.use('/:channelSlug/messages', messageRoutes);
+
 router.use(serverMiddlewares.checkServerAuthority);
 
 router.route('/').post(channelController.create);

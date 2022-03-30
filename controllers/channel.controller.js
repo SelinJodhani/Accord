@@ -1,12 +1,18 @@
-const Channel = require('../models/channelModel');
-const Message = require('../models/messageModel');
-const Server = require('../models/serverModel');
-const catchAsync = require('../utils/catchAsync');
+const createError = require('http-errors');
+
+const Channel = require('../models/Channel');
+const Message = require('../models/Message');
+const Server = require('../models/Server');
+const catchAsync = require('../utils/catch.async');
 
 exports.create = catchAsync(async (req, res, next) => {
   const server = await Server.findOne({ slug: req.params.serverSlug });
+
+  if (!server) return next(new createError(400, 'Server does not exist!'));
+
   const channel = await Channel.create({
     name: req.body.name,
+    type: req.body.type,
     server: server._id,
   });
 

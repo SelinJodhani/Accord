@@ -1,20 +1,20 @@
-const AppError = require('../../utils/appError');
+const createError = require('http-errors');
 
 const handleValidationError = err => {
   const errors = Object.values(err.errors).map(el => el.message);
   const message = `${errors[0]}`;
-  return new AppError(message, 400);
+  return new createError(400, message);
 };
 
 const handleDuplicateKeyError = err => {
   const value = err.message.match(/(["'])(\\?.)*?\1/)[0];
   const message = `${value}: already exist!`;
-  return new AppError(message, 400);
+  return new createError(400, message);
 };
 
 const handleLimitFileSize = err => {
   const message = 'File Size is too large. Max Allowed file size is 5 mb.';
-  return new AppError(message, 400);
+  return new createError(400, message);
 };
 
 const sendError = (err, res) => {

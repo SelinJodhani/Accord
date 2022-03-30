@@ -1,5 +1,5 @@
 const multer = require('multer');
-const AppError = require('../utils/appError');
+const createError = require('http-errors');
 
 module.exports = function (model) {
   const multerStorage = multer.diskStorage({
@@ -15,7 +15,7 @@ module.exports = function (model) {
 
   const multerFilter = (req, file, cb) => {
     if (!file.mimetype.startsWith('image'))
-      cb(new AppError('Only image file is allowed!', 400), false);
+      cb(new createError(400, 'Only image file is allowed!'), false);
     cb(null, true);
   };
 

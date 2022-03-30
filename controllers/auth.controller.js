@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const User = require('../models/userModel');
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+const createError = require('http-errors');
+
+const User = require('../models/User');
+const catchAsync = require('../utils/catch.async');
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -29,13 +30,15 @@ const authController = {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return next(new AppError('Please provide your email and password!', 401));
+      return next(
+        new createError(401, 'Please provide your email and password!')
+      );
     }
 
     const user = await User.findOne({ email }).select('+password');
 
     if (!user || !(await user.correctPassword(password, user.password))) {
-      return next(new AppError('Incorrect email or password!', 401));
+      return next(new createError(401, 'Incorrect email or password!'));
     }
 
     createSendToken(user, res, 200);
@@ -58,7 +61,7 @@ const authController = {
     if (
       !(await user.correctPassword(req.body.passwordCurrent, user.password))
     ) {
-      return next(new AppError('Your current password is wrong.', 401));
+      return next(new createError(401, 'Your current password is wrong.'));
     }
 
     user.password = req.body.password;
@@ -72,7 +75,7 @@ const authController = {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
       return next(
-        new AppError(`There is no user with email: ${req.body.email}`, 401)
+        new createError(401, `There is no user with email: ${req.body.email}`)
       );
     }
 
@@ -102,9 +105,9 @@ const authController = {
       await user.save({ validateBeforeSave: false });
 
       return next(
-        new AppError(
-          'There was an error sending the email. Try again later!',
-          400
+        new createError(
+          400,
+          'There was an error sending the email. Try again later!'
         )
       );
     }
@@ -122,7 +125,7 @@ const authController = {
     });
 
     if (!user) {
-      return next(new AppError('Token is invalid or has expired', 401));
+      return next(new createError(401, 'Token is invalid or has expired'));
     }
 
     user.password = req.body.password;

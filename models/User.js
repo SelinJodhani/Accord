@@ -47,10 +47,6 @@ const userSchema = new mongoose.Schema(
         ref: 'Server',
       },
     ],
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
@@ -61,9 +57,10 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
+    id: false,
+    timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-    id: false,
   }
 );
 

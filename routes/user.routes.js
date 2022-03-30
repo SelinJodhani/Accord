@@ -1,10 +1,10 @@
 const express = require('express');
 
-const uploadImage = require('../middlewares/uploadImageMiddlewares')('User');
-const userController = require('../controllers/userController');
-const authController = require('../controllers/authController');
+const uploadImage = require('../middlewares/image.upload.middlewares')('User');
+const userController = require('../controllers/user.controller');
+const authController = require('../controllers/auth.controller');
 
-const authMiddlewares = require('../middlewares/authMiddlewares');
+const authMiddlewares = require('../middlewares/auth.middlewares');
 
 const router = express.Router();
 

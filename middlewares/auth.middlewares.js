@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
 
-const User = require('../models/userModel');
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+const User = require('../models/User');
+const catchAsync = require('../utils/catch.async');
+const createError = require('http-errors');
 
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
@@ -16,7 +16,10 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   if (!token) {
     return next(
-      new AppError('You are not logged in! Please log in to get access.', 401)
+      new createError(
+        401,
+        'You are not logged in! Please log in to get access.'
+      )
     );
   }
 
@@ -25,16 +28,19 @@ exports.protect = catchAsync(async (req, res, next) => {
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
     return next(
-      new AppError(
-        'The user belonging to this token does no longer exist.',
-        401
+      new createError(
+        401,
+        'The user belonging to this token does no longer exist.'
       )
     );
   }
 
   if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
-      new AppError('User recently changed password! Please log in again.', 401)
+      new createError(
+        401,
+        'User recently changed password! Please log in again.'
+      )
     );
   }
 
