@@ -14,11 +14,17 @@ const addUser = data => {
       ],
     };
   } else {
-    connected_users[data.channelId].users.push({
-      _id: data.userId,
-      name: data.name,
-      image: data.image,
+    const userExist = connected_users[data.channelId].users.findIndex(user => {
+      return user._id === data.userId;
     });
+
+    if (userExist === -1) {
+      connected_users[data.channelId].users.push({
+        _id: data.userId,
+        name: data.name,
+        image: data.image,
+      });
+    }
   }
 };
 

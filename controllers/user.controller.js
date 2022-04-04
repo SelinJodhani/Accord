@@ -3,6 +3,7 @@ const createError = require('http-errors');
 
 const User = require('../models/User');
 const catchAsync = require('../utils/catch.async');
+const { deleteUser } = require('../utils/delete.cascade');
 
 exports.find = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id)
@@ -52,5 +53,21 @@ exports.update = catchAsync(async (req, res, next) => {
     data: {
       user,
     },
+  });
+});
+
+exports.delete = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndDelete(req.user._id);
+
+  await deleteUser(user._id);
+
+  if (user.image !== 'Accord.png')
+    await fs.promises.unlink(
+      `${__dirname}/../public/images/users/${user.image}`
+    );
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
   });
 });

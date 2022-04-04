@@ -4,6 +4,7 @@ const Channel = require('../models/Channel');
 const Message = require('../models/Message');
 const Server = require('../models/Server');
 const catchAsync = require('../utils/catch.async');
+const { deleteChannel } = require('../utils/delete.cascade');
 
 exports.create = catchAsync(async (req, res, next) => {
   const server = await Server.findOne({ slug: req.params.serverSlug });
@@ -34,11 +35,7 @@ exports.delete = catchAsync(async (req, res, next) => {
     slug: req.params.channelSlug,
   });
 
-  await Message.deleteMany({ channel: channel._id });
-  await Server.updateOne(
-    { slug: req.params.serverSlug },
-    { $pull: { channels: channel._id } }
-  );
+  await deleteChannel(channel._id, req.params.serverSlug);
 
   res.status(204).json({
     status: 'success',

@@ -6,6 +6,7 @@ const Server = require('../models/Server');
 const User = require('../models/User');
 const createError = require('http-errors');
 const catchAsync = require('../utils/catch.async');
+const { deleteServer } = require('../utils/delete.cascade');
 
 exports.get = catchAsync(async (req, res, next) => {
   const server = await Server.find({ slug: req.params.serverSlug });
@@ -40,12 +41,12 @@ exports.create = catchAsync(async (req, res, next) => {
   });
   const channel = await Channel.create([
     {
-      name: 'General',
+      name: 'General Text',
       type: 'Text',
       server: server._id,
     },
     {
-      name: 'General',
+      name: 'General Voice',
       type: 'Voice',
       server: server._id,
     },
@@ -93,12 +94,7 @@ exports.update = catchAsync(async (req, res, next) => {
 exports.delete = catchAsync(async (req, res, next) => {
   const server = await Server.findOneAndDelete({ slug: req.params.serverSlug });
 
-  await User.updateMany(
-    { servers: server._id },
-    { $pull: { servers: server._id } }
-  );
-  await Channel.deleteMany({ server: server._id });
-  await Message.deleteMany({ server: server._id });
+  await deleteServer(server._id);
 
   if (server.image !== 'Accord.png')
     await fs.promises.unlink(
