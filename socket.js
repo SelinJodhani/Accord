@@ -61,6 +61,10 @@ module.exports = io => {
       messageController.save(data);
     });
 
+    socket.on('leave-text-channel', () => {
+      socket.rooms.forEach(room => socket.leave(room));
+    });
+
     socket.on('disconnected', data => {
       removeUser(data);
 
