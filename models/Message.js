@@ -18,11 +18,11 @@ const messageSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'User',
     },
-    channel: {
+    channelId: {
       type: mongoose.Schema.ObjectId,
       ref: 'Channel',
     },
-    server: {
+    serverId: {
       type: mongoose.Schema.ObjectId,
       ref: 'Server',
     },

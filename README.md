@@ -71,10 +71,10 @@ For development, you will only need Node.js and a node global package, installed
 If the installation was successful, you should be able to run the following command.
 
     $ node --version
-    v8.11.3
+    v14.17.0
 
     $ npm --version
-    6.1.0
+    8.6.0
 
 If you need to update `npm`, you can make it using `npm`! Cool right? After running the following command, just open again the command line and be happy.
 

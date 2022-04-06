@@ -61,6 +61,11 @@ module.exports = io => {
       messageController.save(data);
     });
 
+    socket.on('delete-message', data => {
+      io.in(data.data.channelId).emit('delete-message', data);
+      messageController.delete(data);
+    });
+
     socket.on('leave-text-channel', () => {
       socket.rooms.forEach(room => socket.leave(room));
     });
