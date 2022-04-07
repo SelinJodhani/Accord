@@ -41,12 +41,12 @@ exports.create = catchAsync(async (req, res, next) => {
   });
   const channel = await Channel.create([
     {
-      name: 'General Text',
+      name: 'general',
       type: 'Text',
       server: server._id,
     },
     {
-      name: 'General Voice',
+      name: 'General',
       type: 'Voice',
       server: server._id,
     },

@@ -33,7 +33,7 @@ const messageSchema = new mongoose.Schema(
 );
 
 messageSchema.index({ channel: 1 });
-messageSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
+messageSchema.index({ createdAt: 1 }, { expireAfterSeconds: 172800 });
 
 messageSchema.pre(/^find/, function (next) {
   this.populate({

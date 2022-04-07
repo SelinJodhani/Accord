@@ -33,7 +33,7 @@ exports.all = catchAsync(async (req, res, next) => {
     slug: req.params.channelSlug,
   });
 
-  const messages = await Message.find({ channel: channel._id }).sort(
+  const messages = await Message.find({ channelId: channel._id }).sort(
     'createdAt'
   );
 

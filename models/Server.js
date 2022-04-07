@@ -14,6 +14,7 @@ const serverSchema = new mongoose.Schema(
       type: String,
       slug: 'name',
       unique: true,
+      lowercase: false,
     },
     image: {
       type: String,
