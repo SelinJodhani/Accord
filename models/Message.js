@@ -14,6 +14,12 @@ const messageSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'Message',
     },
+    type: {
+      type: String,
+      required: true,
+      enum: ['Text', 'File'],
+      default: 'Text',
+    },
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',

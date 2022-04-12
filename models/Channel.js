@@ -5,21 +5,13 @@ mongoose.plugin(slug);
 
 const channelSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      trim: true,
-      required: [true, 'Channel name is required!'],
-    },
-    type: {
-      type: String,
-      required: true,
-      enum: ['Text', 'Voice'],
-      default: 'Text',
-    },
+    name: String,
+    type: String,
     slug: {
       type: String,
       slug: 'name',
       unique: true,
+      lowercase: false,
     },
     server: {
       type: mongoose.Schema.ObjectId,

@@ -5,42 +5,17 @@ const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      trim: true,
-      required: [true, 'Name is required!'],
-    },
-    image: {
-      type: String,
-      default: 'Accord.png',
-    },
+    name: String,
+    image: String,
     email: {
       type: String,
-      required: [true, 'Email is required!'],
-      lowercase: true,
       unique: true,
-      trim: true,
-      validate: [
-        /^[a-z]([a-z]){2}@narola.email/,
-        'Only Narola Emails are valid for now!',
-      ],
     },
     password: {
       type: String,
-      required: [true, 'Password cannot be empty!'],
-      validate: [validator.isStrongPassword, 'Password is not strong enough!'],
       select: false,
     },
-    passwordConfirm: {
-      type: String,
-      required: [true, 'Confirm password is required!'],
-      validate: {
-        validator: function (passwordConfirm) {
-          return this.password === passwordConfirm;
-        },
-        message: 'Password does not match!',
-      },
-    },
+    passwordConfirm: String,
     servers: [
       {
         type: mongoose.Schema.ObjectId,

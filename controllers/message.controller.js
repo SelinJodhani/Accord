@@ -10,6 +10,7 @@ exports.save = async data => {
     _id: new mongoose.mongo.ObjectId(data._id),
     message: data.message,
     reply: data.reply?._id,
+    type: data.type,
     user: data.user._id,
     channelId: data.channelId,
     serverId: data.serverId,
@@ -37,7 +38,7 @@ exports.all = catchAsync(async (req, res, next) => {
     'createdAt'
   );
 
-  res.status(200).json({
+  return res.status(200).json({
     status: 'success',
     data: {
       messages,

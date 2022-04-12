@@ -5,21 +5,14 @@ mongoose.plugin(slug);
 
 const serverSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      trim: true,
-      required: [true, 'Server name is required!'],
-    },
+    name: String,
     slug: {
       type: String,
       slug: 'name',
       unique: true,
       lowercase: false,
     },
-    image: {
-      type: String,
-      default: 'Accord.png',
-    },
+    image: String,
     author: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',

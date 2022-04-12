@@ -5,7 +5,7 @@ const createError = require('http-errors');
 exports.checkServerAuthority = catchAsync(async (req, res, next) => {
   const server = await Server.findOne({ slug: req.params.serverSlug });
 
-  if (!server) return next(new AppError('Server does not exist!'));
+  if (!server) return next(new createError('Server does not exist!'));
 
   if (!req.user._id.equals(server.author._id)) {
     return next(

@@ -13,12 +13,12 @@ const handleDuplicateKeyError = err => {
 };
 
 const handleLimitFileSize = err => {
-  const message = 'File Size is too large. Max Allowed file size is 5 mb.';
+  const message = 'File Size is too large. Max Allowed file size is 3 mb.';
   return new createError(400, message);
 };
 
 const sendError = (err, res) => {
-  res.status(err.statusCode).json({
+  return res.status(err.statusCode).json({
     status: err.status,
     name: err.name,
     code: err.code,
@@ -36,8 +36,8 @@ module.exports = (err, req, res, next) => {
   error = Object.assign(err, error);
 
   if (error.name === 'ValidationError') error = handleValidationError(error);
-  if (error.code === 11000) error = handleDuplicateKeyError(error);
   if (error.code == 'LIMIT_FILE_SIZE') error = handleLimitFileSize(error);
+  if (error.code === 11000) error = handleDuplicateKeyError(error);
 
   sendError(error, res);
 };

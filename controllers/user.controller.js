@@ -13,7 +13,7 @@ exports.find = catchAsync(async (req, res, next) => {
     })
     .select('-__v');
 
-  res.status(200).json({
+  return res.status(200).json({
     status: 'success',
     data: {
       user,
@@ -48,7 +48,7 @@ exports.update = catchAsync(async (req, res, next) => {
       `${__dirname}/../public/images/users/${user.image}`
     );
 
-  res.status(200).json({
+  return res.status(200).json({
     status: 'success',
     data: {
       user,
@@ -66,7 +66,7 @@ exports.delete = catchAsync(async (req, res, next) => {
       `${__dirname}/../public/images/users/${user.image}`
     );
 
-  res.status(204).json({
+  return res.status(204).json({
     status: 'success',
     data: null,
   });

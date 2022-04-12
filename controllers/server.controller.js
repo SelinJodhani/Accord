@@ -1,7 +1,6 @@
 const fs = require('fs');
 
 const Channel = require('../models/Channel');
-const Message = require('../models/Message');
 const Server = require('../models/Server');
 const User = require('../models/User');
 const createError = require('http-errors');
@@ -11,23 +10,12 @@ const { deleteServer } = require('../utils/delete.cascade');
 exports.get = catchAsync(async (req, res, next) => {
   const server = await Server.find({ slug: req.params.serverSlug });
 
-  if (!server) return next(new AppError('Server does not exist!'));
+  if (!server) return next(new createError('Server does not exist!'));
 
-  res.status(200).json({
+  return res.status(200).json({
     status: 'success',
     data: {
       server,
-    },
-  });
-});
-
-exports.find = catchAsync(async (req, res, next) => {
-  const servers = await Server.find({ users: req.user._id });
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      servers,
     },
   });
 });
@@ -60,7 +48,7 @@ exports.create = catchAsync(async (req, res, next) => {
     { $push: { channels: { $each: data } } }
   );
 
-  res.status(201).json({
+  return res.status(201).json({
     status: 'success',
     data: {
       server,
@@ -78,12 +66,12 @@ exports.update = catchAsync(async (req, res, next) => {
     }
   );
 
-  if (server.image !== 'Accord.png')
+  if (req.file && server.image !== 'Accord.png')
     await fs.promises.unlink(
       `${__dirname}/../public/images/servers/${server.image}`
     );
 
-  res.status(200).json({
+  return res.status(200).json({
     status: 'success',
     data: {
       server,
@@ -101,7 +89,7 @@ exports.delete = catchAsync(async (req, res, next) => {
       `${__dirname}/../public/images/servers/${server.image}`
     );
 
-  res.status(204).json({
+  return res.status(204).json({
     status: 'success',
     data: null,
   });
@@ -119,7 +107,7 @@ exports.join = catchAsync(async (req, res, next) => {
   await Server.updateOne({ _id: server._id }, { $push: { users: user._id } });
   await User.updateOne({ _id: user._id }, { $push: { servers: server._id } });
 
-  res.status(200).json({
+  return res.status(200).json({
     status: 'success',
     message: 'Server joined successfully',
   });
@@ -145,7 +133,7 @@ exports.leave = catchAsync(async (req, res, next) => {
   await Server.updateOne({ _id: server._id }, { $pull: { users: user._id } });
   await User.updateOne({ _id: user._id }, { $pull: { servers: server._id } });
 
-  res.status(200).json({
+  return res.status(200).json({
     status: 'success',
     message: 'Server left successfully',
   });
