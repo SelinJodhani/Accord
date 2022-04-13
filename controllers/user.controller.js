@@ -57,11 +57,6 @@ exports.update = catchAsync(async (req, res, next) => {
 });
 
 exports.delete = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.user._id);
-
-  if (user._id !== req.user._id)
-    return next(new createError(400, 'You can only delete your own profile!'));
-
   await deleteUser(req.user._id);
 
   if (req.user.image !== 'Accord.png')

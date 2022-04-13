@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+
+const { FriendList } = require('../models/Friend');
 
 const userSchema = new mongoose.Schema(
   {
@@ -36,6 +37,11 @@ const userSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+userSchema.pre('save', async function (next) {
+  if (this.isNew) await FriendList.create({ user: this._id });
+  next();
+});
 
 userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();

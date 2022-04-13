@@ -37,5 +37,6 @@ router.patch(
   validator(updateUserSchema),
   userController.update
 );
+router.delete('/deleteMe', userController.delete);
 
 module.exports = router;

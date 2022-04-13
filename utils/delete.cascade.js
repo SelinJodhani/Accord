@@ -4,7 +4,7 @@ const Channel = require('../models/Channel');
 const Message = require('../models/Message');
 
 exports.deleteUser = async user_id => {
-  const user = User.findByIdAndDelete(user_id);
+  const user = await User.findByIdAndDelete(user_id);
   const servers = await Server.find({ author: user._id });
 
   servers.forEach(server => {

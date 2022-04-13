@@ -5,6 +5,7 @@ const compression = require('compression');
 
 const userRoutes = require('./routes/user.routes');
 const serverRoutes = require('./routes/server.routes');
+const friendRoutes = require('./routes/friend.routes');
 
 const createError = require('http-errors');
 const globalErrorHandler = require('./utils/error.util');
@@ -23,6 +24,7 @@ app.use('/api', router);
 
 router.use('/users', userRoutes);
 router.use('/servers', serverRoutes);
+router.use('/friends', friendRoutes);
 
 router.all('*', (req, res, next) => {
   next(new createError(404, `Can't find ${req.originalUrl} on this server!`));
