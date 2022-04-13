@@ -5,11 +5,7 @@ mongoose.plugin(slug);
 
 const serverSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      trim: true,
-      required: [true, 'Server name is required!'],
-    },
+    name: String,
     slug: {
       type: String,
       slug: 'name',

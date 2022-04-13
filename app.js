@@ -7,7 +7,7 @@ const userRoutes = require('./routes/user.routes');
 const serverRoutes = require('./routes/server.routes');
 
 const createError = require('http-errors');
-const globalErrorHandler = require('./controllers/utils/error.controller');
+const globalErrorHandler = require('./utils/error.util');
 
 const app = express();
 const router = express.Router();

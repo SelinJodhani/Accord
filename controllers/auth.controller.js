@@ -16,7 +16,7 @@ const createSendToken = (user, res, statusCode) => {
 
   user.password = undefined;
 
-  res.status(statusCode).json({
+  return res.status(statusCode).json({
     status: 'success',
     token,
     data: {
@@ -28,12 +28,6 @@ const createSendToken = (user, res, statusCode) => {
 const authController = {
   login: catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return next(
-        new createError(401, 'Please provide your email and password!')
-      );
-    }
 
     const user = await User.findOne({ email }).select('+password');
 
@@ -95,7 +89,7 @@ const authController = {
         message,
       });
 
-      res.status(200).json({
+      return res.status(200).json({
         status: 'success',
         message: 'Token sent to email!',
       });

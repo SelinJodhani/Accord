@@ -13,7 +13,7 @@ exports.find = catchAsync(async (req, res, next) => {
     })
     .select('-__v');
 
-  res.status(200).json({
+  return res.status(200).json({
     status: 'success',
     data: {
       user,
@@ -48,7 +48,7 @@ exports.update = catchAsync(async (req, res, next) => {
       `${__dirname}/../public/images/users/${user.image}`
     );
 
-  res.status(200).json({
+  return res.status(200).json({
     status: 'success',
     data: {
       user,
@@ -57,16 +57,19 @@ exports.update = catchAsync(async (req, res, next) => {
 });
 
 exports.delete = catchAsync(async (req, res, next) => {
-  const user = await User.findByIdAndDelete(req.user._id);
+  const user = await User.findById(req.user._id);
 
-  await deleteUser(user._id);
+  if (user._id !== req.user._id)
+    return next(new createError(400, 'You can only delete your own profile!'));
 
-  if (user.image !== 'Accord.png')
+  await deleteUser(req.user._id);
+
+  if (req.user.image !== 'Accord.png')
     await fs.promises.unlink(
-      `${__dirname}/../public/images/users/${user.image}`
+      `${__dirname}/../public/images/users/${req.user.image}`
     );
 
-  res.status(204).json({
+  return res.status(204).json({
     status: 'success',
     data: null,
   });

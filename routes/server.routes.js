@@ -1,13 +1,17 @@
 const express = require('express');
 
-const uploadImage = require('../middlewares/image.upload.middlewares')(
-  'Server'
-);
+const uploadImage = require('../middlewares/image.upload.middleware')('Server');
 const channelRoutes = require('./channel.routes');
 const serverController = require('../controllers/server.controller');
 
-const authMiddlewares = require('../middlewares/auth.middlewares');
-const serverMiddlewares = require('../middlewares/server.middlewares');
+const authMiddlewares = require('../middlewares/auth.middleware');
+const serverMiddlewares = require('../middlewares/server.middleware');
+
+const { validator } = require('../middlewares/validate.middleware');
+const {
+  createServerSchema,
+  updateServerSchema,
+} = require('../validations/server.validation');
 
 const router = express.Router();
 
@@ -16,14 +20,14 @@ router.use('/:serverSlug/channels', channelRoutes);
 
 router
   .route('/')
-  .get(serverController.find)
-  .post(uploadImage, serverController.create);
+  .post(uploadImage, validator(createServerSchema), serverController.create);
 
 router
   .route('/:serverSlug')
   .get(serverController.get)
   .patch(
     uploadImage,
+    validator(updateServerSchema),
     serverMiddlewares.checkServerAuthority,
     serverController.update
   )

@@ -70,6 +70,10 @@ module.exports = io => {
       socket.rooms.forEach(room => socket.leave(room));
     });
 
+    socket.on('send-files', data => {
+      io.in(data.channelId).emit('send-files', data);
+    });
+
     socket.on('disconnected', data => {
       removeUser(data);
 

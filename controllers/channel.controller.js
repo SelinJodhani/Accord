@@ -1,7 +1,6 @@
 const createError = require('http-errors');
 
 const Channel = require('../models/Channel');
-const Message = require('../models/Message');
 const Server = require('../models/Server');
 const catchAsync = require('../utils/catch.async');
 const { deleteChannel } = require('../utils/delete.cascade');
@@ -22,7 +21,7 @@ exports.create = catchAsync(async (req, res, next) => {
     { $push: { channels: channel._id } }
   );
 
-  res.status(201).json({
+  return res.status(201).json({
     status: 'success',
     data: {
       channel,
@@ -31,13 +30,13 @@ exports.create = catchAsync(async (req, res, next) => {
 });
 
 exports.delete = catchAsync(async (req, res, next) => {
-  const channel = await Channel.findOneAndDelete({
+  const channel = await Channel.findOne({
     slug: req.params.channelSlug,
   });
 
-  await deleteChannel(channel._id, req.params.serverSlug);
+  await deleteChannel(channel._id);
 
-  res.status(204).json({
+  return res.status(204).json({
     status: 'success',
     data: null,
   });
