@@ -6,7 +6,10 @@ const crypto = require('crypto');
 const userSchema = new mongoose.Schema(
   {
     name: String,
-    image: String,
+    image: {
+      type: String,
+      default: 'Accord.png',
+    },
     email: {
       type: String,
       unique: true,

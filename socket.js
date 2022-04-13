@@ -57,8 +57,6 @@ module.exports = io => {
       delete data.user.servers;
       delete data.user.createdAt;
 
-      console.log(data);
-
       io.in(data.channelId).emit('new-message', data);
       messageController.save(data);
     });
@@ -70,19 +68,6 @@ module.exports = io => {
 
     socket.on('leave-text-channel', () => {
       socket.rooms.forEach(room => socket.leave(room));
-    });
-
-    socket.on('file-meta', function (data) {
-      console.log(data);
-      io.in(data.channelId).emit('fs-meta', data);
-    });
-    socket.on('fs-start', function (data) {
-      console.log(data);
-      io.in(data.channelId).emit('fs-share', {});
-    });
-    socket.on('file-raw', function (data) {
-      console.log(data);
-      io.in(data.channelId).emit('fs-share', data.buffer);
     });
 
     socket.on('send-files', data => {

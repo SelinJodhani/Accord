@@ -4,25 +4,40 @@ const Channel = require('../models/Channel');
 const Message = require('../models/Message');
 
 exports.deleteUser = async user_id => {
-  await Server.updateMany({ users: user_id }, { $pull: { users: user_id } });
-  await Server.deleteMany({ author: user_id });
-  await Channel.deleteMany({ server: server_id });
-  await Message.deleteMany({ user: user_id });
+  const user = User.findByIdAndDelete(user_id);
+  const servers = await Server.find({ author: user._id });
+
+  servers.forEach(server => {
+    this.deleteServer(server._id);
+  });
+  await Server.updateMany({ users: user._id }, { $pull: { users: user._id } });
 };
 
 exports.deleteServer = async server_id => {
+  const server = await Server.findByIdAndDelete(server_id);
+  const channels = await Channel.find({ server: server._id });
+
+  channels.forEach(channel => {
+    this.deleteChannel(channel._id);
+  });
   await User.updateMany(
-    { servers: server_id },
-    { $pull: { servers: server_id } }
+    { servers: server._id },
+    { $pull: { servers: server._id } }
   );
-  await Channel.deleteMany({ server: server_id });
-  await Message.deleteMany({ server: server_id });
 };
 
-exports.deleteChannel = async (channel_id, server_slug) => {
-  await Message.deleteMany({ channel: channel_id });
-  await Server.updateOne(
-    { slug: server_slug },
-    { $pull: { channels: channel_id } }
-  );
+exports.deleteChannel = async channel_id => {
+  const channel = await Channel.findByIdAndDelete(channel_id);
+  const server = await Server.findById(channel.server);
+  const messages = await Message.find({ channelId: channel._id });
+
+  messages.forEach(message => this.deleteMessage(message._id));
+  if (server)
+    await Server.findByIdAndUpdate(server._id, {
+      $pull: { channels: channel._id },
+    });
+};
+
+exports.deleteMessage = async message_id => {
+  await Message.findByIdAndDelete(message_id);
 };

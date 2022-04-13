@@ -6,7 +6,11 @@ mongoose.plugin(slug);
 const channelSchema = new mongoose.Schema(
   {
     name: String,
-    type: String,
+    type: {
+      type: String,
+      enum: ['Text', 'Voice'],
+      default: 'Text',
+    },
     slug: {
       type: String,
       slug: 'name',

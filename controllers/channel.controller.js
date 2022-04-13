@@ -30,11 +30,11 @@ exports.create = catchAsync(async (req, res, next) => {
 });
 
 exports.delete = catchAsync(async (req, res, next) => {
-  const channel = await Channel.findOneAndDelete({
+  const channel = await Channel.findOne({
     slug: req.params.channelSlug,
   });
 
-  await deleteChannel(channel._id, req.params.serverSlug);
+  await deleteChannel(channel._id);
 
   return res.status(204).json({
     status: 'success',

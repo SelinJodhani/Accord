@@ -80,7 +80,7 @@ exports.update = catchAsync(async (req, res, next) => {
 });
 
 exports.delete = catchAsync(async (req, res, next) => {
-  const server = await Server.findOneAndDelete({ slug: req.params.serverSlug });
+  const server = await Server.findOne({ slug: req.params.serverSlug });
 
   await deleteServer(server._id);
 
