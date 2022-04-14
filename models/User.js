@@ -38,6 +38,8 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+userSchema.index({ name: 'text' });
+
 userSchema.pre('save', async function (next) {
   if (this.isNew) await FriendList.create({ user: this._id });
   next();

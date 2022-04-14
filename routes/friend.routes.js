@@ -10,6 +10,9 @@ const router = express.Router();
 
 router.use(authMiddlewares.protect);
 
+router.route('/all').get(friendController.all);
+router.route('/pending').get(friendController.pending);
+
 router.route('/send').post(friendController.send);
 router.route('/accept').post(friendController.accept);
 router.route('/decline').post(friendController.decline);

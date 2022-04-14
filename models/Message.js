@@ -44,7 +44,7 @@ messageSchema.index({ createdAt: 1 }, { expireAfterSeconds: 172800 });
 messageSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
-    select: '-__v -createdAt -servers -email',
+    select: '-__v -servers -email',
   }).populate({
     path: 'reply',
     select: '-__v -reply',

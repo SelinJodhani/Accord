@@ -21,6 +21,19 @@ exports.find = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.search = catchAsync(async (req, res, next) => {
+  const { search } = req.query;
+
+  const users = await User.find({ $text: { $search: search } });
+
+  return res.status(200).json({
+    status: 'success',
+    data: {
+      users,
+    },
+  });
+});
+
 exports.update = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(

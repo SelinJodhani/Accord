@@ -8,7 +8,15 @@ const catchAsync = require('../utils/catch.async');
 const { deleteServer } = require('../utils/delete.cascade');
 
 exports.get = catchAsync(async (req, res, next) => {
-  const server = await Server.find({ slug: req.params.serverSlug });
+  const server = await Server.find({ slug: req.params.serverSlug })
+    .populate({
+      path: 'author',
+      select: '-__v -servers',
+    })
+    .populate({
+      path: 'users',
+      select: '-__v -servers',
+    });
 
   if (!server) return next(new createError('Server does not exist!'));
 

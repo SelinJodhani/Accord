@@ -30,7 +30,8 @@ router.patch(
   authController.updatePassword
 );
 
-router.route('/').get(userController.find);
+router.route('/').get(userController.search);
+router.route('/me').get(userController.find);
 router.patch(
   '/updateMe',
   uploadImage,
