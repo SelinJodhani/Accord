@@ -14,6 +14,7 @@ router.route('/all').get(friendController.all);
 router.route('/pending').get(friendController.pending);
 
 router.route('/send').post(friendController.send);
+router.route('/cancel').post(friendController.cancel);
 router.route('/accept').post(friendController.accept);
 router.route('/decline').post(friendController.decline);
 router.route('/unfriend').post(friendController.unfriend);

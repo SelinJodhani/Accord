@@ -5,6 +5,19 @@ const User = require('../models/User');
 const catchAsync = require('../utils/catch.async');
 const { deleteUser } = require('../utils/delete.cascade');
 
+exports.get = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id).select('-servers');
+
+  if (!user) return next(new createError(400, 'User doesn not exist!'));
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  });
+});
+
 exports.find = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id)
     .populate({
@@ -24,7 +37,7 @@ exports.find = catchAsync(async (req, res, next) => {
 exports.search = catchAsync(async (req, res, next) => {
   const { search } = req.query;
 
-  const users = await User.find({ $text: { $search: search } });
+  const users = await User.find({ name: { $regex: search, $options: 'i' } });
 
   return res.status(200).json({
     status: 'success',

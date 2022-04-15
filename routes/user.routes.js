@@ -32,6 +32,7 @@ router.patch(
 
 router.route('/').get(userController.search);
 router.route('/me').get(userController.find);
+router.route('/:id').get(userController.get);
 router.patch(
   '/updateMe',
   uploadImage,

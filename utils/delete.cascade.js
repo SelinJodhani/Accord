@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const Server = require('../models/Server');
 const Channel = require('../models/Channel');
-const Message = require('../models/Message');
+const { PublicMessage } = require('../models/Message');
 
 exports.deleteUser = async user_id => {
   const user = await User.findByIdAndDelete(user_id);
@@ -29,7 +29,7 @@ exports.deleteServer = async server_id => {
 exports.deleteChannel = async channel_id => {
   const channel = await Channel.findByIdAndDelete(channel_id);
   const server = await Server.findById(channel.server);
-  const messages = await Message.find({ channelId: channel._id });
+  const messages = await PublicMessage.find({ channelId: channel._id });
 
   messages.forEach(message => this.deleteMessage(message._id));
   if (server)
@@ -39,5 +39,5 @@ exports.deleteChannel = async channel_id => {
 };
 
 exports.deleteMessage = async message_id => {
-  await Message.findByIdAndDelete(message_id);
+  await PublicMessage.findByIdAndDelete(message_id);
 };

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const messageSchema = new mongoose.Schema(
+const publicMessageSchema = new mongoose.Schema(
   {
     _id: {
       type: mongoose.Schema.ObjectId,
@@ -8,11 +8,11 @@ const messageSchema = new mongoose.Schema(
     message: {
       type: String,
       trim: true,
-      required: [true, 'Message cannot be empty!'],
+      required: [true, 'PublicMessage cannot be empty!'],
     },
     reply: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Message',
+      ref: 'PublicMessage',
     },
     type: {
       type: String,
@@ -38,10 +38,43 @@ const messageSchema = new mongoose.Schema(
   }
 );
 
-messageSchema.index({ channel: 1 });
-messageSchema.index({ createdAt: 1 }, { expireAfterSeconds: 172800 });
+const privateMessageSchema = new mongoose.Schema(
+  {
+    _id: {
+      type: mongoose.Schema.ObjectId,
+    },
+    message: {
+      type: String,
+      trim: true,
+      required: [true, 'PublicMessage cannot be empty!'],
+    },
+    reply: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'PrivateMessage',
+    },
+    type: {
+      type: String,
+      required: true,
+      enum: ['Text', 'File'],
+      default: 'Text',
+    },
+    user1: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+    },
+    user2: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-messageSchema.pre(/^find/, function (next) {
+publicMessageSchema.index({ channel: 1 });
+publicMessageSchema.index({ createdAt: 1 }, { expireAfterSeconds: 172800 });
+publicMessageSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
     select: '-__v -servers -email',
@@ -52,6 +85,19 @@ messageSchema.pre(/^find/, function (next) {
   next();
 });
 
-const Message = mongoose.model('Message', messageSchema);
+privateMessageSchema.index({ createdAt: 1 }, { expireAfterSeconds: 172800 });
+privateMessageSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'user',
+    select: '-__v -servers -email',
+  }).populate({
+    path: 'reply',
+    select: '-__v -reply',
+  });
+  next();
+});
 
-module.exports = Message;
+module.exports = {
+  PublicMessage: mongoose.model('PublicMessage', publicMessageSchema),
+  PrivateMessage: mongoose.model('PrivateMessage', privateMessageSchema),
+};

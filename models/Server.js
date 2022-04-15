@@ -45,9 +45,17 @@ serverSchema.pre('save', function (next) {
 
 serverSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'channels',
-    select: ' -__v -server',
-  });
+    path: 'author',
+    select: '-__v -servers',
+  })
+    .populate({
+      path: 'channels',
+      select: ' -__v -server',
+    })
+    .populate({
+      path: 'users',
+      select: '-__v -servers',
+    });
   next();
 });
 

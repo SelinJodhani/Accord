@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 const Channel = require('../models/Channel');
-const Message = require('../models/Message');
+const { PublicMessage } = require('../models/Message');
 const Server = require('../models/Server');
 const catchAsync = require('../utils/catch.async');
 
 exports.save = async data => {
-  await Message.create({
+  await PublicMessage.create({
     _id: new mongoose.mongo.ObjectId(data._id),
     message: data.message,
     reply: data.reply?._id,
@@ -20,13 +20,13 @@ exports.save = async data => {
 
 exports.delete = async data => {
   const server = await Server.findById(data.data.serverId);
-  const message = await Message.findById(data.data._id);
+  const message = await PublicMessage.findById(data.data._id);
 
   if (
     data.user._id === message.user._id.toString() ||
     server.author._id.toString() === data.user._id
   )
-    await Message.findByIdAndDelete(data.data._id);
+    await PublicMessage.findByIdAndDelete(data.data._id);
 };
 
 exports.all = catchAsync(async (req, res, next) => {
@@ -34,7 +34,7 @@ exports.all = catchAsync(async (req, res, next) => {
     slug: req.params.channelSlug,
   });
 
-  const messages = await Message.find({ channelId: channel._id }).sort(
+  const messages = await PublicMessage.find({ channelId: channel._id }).sort(
     'createdAt'
   );
 
