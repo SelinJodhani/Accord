@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
+const createError = require('http-errors');
 const { promisify } = require('util');
 
 const User = require('../models/User');
 const catchAsync = require('../utils/catch.async');
-const createError = require('http-errors');
 
 exports.protect = catchAsync(async (req, res, next) => {
   let token;

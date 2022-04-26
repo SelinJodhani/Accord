@@ -1,6 +1,13 @@
 require('dotenv').config();
 require('mongoose').connect(process.env.MONGO_CONNECTION_STRING);
 
+require('cloudinary').v2.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+  secure: false,
+});
+
 const app = require('./app');
 const init = require('./socket');
 

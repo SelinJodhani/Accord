@@ -14,7 +14,8 @@ const serverSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: 'Accord.png',
+      default:
+        'https://res.cloudinary.com/du0p5yed7/image/upload/v1650957028/Accord/images/servers/Accord_xwlbjb.png',
     },
     author: {
       type: mongoose.Schema.ObjectId,

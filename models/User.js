@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema(
     name: String,
     image: {
       type: String,
-      default: 'Accord.png',
+      default:
+        'https://res.cloudinary.com/du0p5yed7/image/upload/v1650957001/Accord/images/users/Accord_z1ovzz.png',
     },
     email: {
       type: String,

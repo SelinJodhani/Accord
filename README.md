@@ -12,6 +12,8 @@ For development, you will only need Node.js and a node global package, installed
 
 - [Features](#features)
 - [Installation](#installation)
+- [Todo](#todo)
+- [InProgress](#inprogress)
 - [Support](#support)
 - [Contribute](#contribute)
 - [License](#license)
@@ -71,10 +73,10 @@ For development, you will only need Node.js and a node global package, installed
 If the installation was successful, you should be able to run the following command.
 
     $ node --version
-    v14.17.0
+    v8.11.3
 
     $ npm --version
-    8.6.0
+    6.1.0
 
 If you need to update `npm`, you can make it using `npm`! Cool right? After running the following command, just open again the command line and be happy.
 
@@ -103,6 +105,21 @@ Open `./.env` then edit it with your settings. You will need:
 ## Simple build for production
 
     $ npm build
+
+## Todo<a name="todo"></a>
+
+- [ ] Unfriend a friend
+- [ ] Implementation of socket for receiving real-time friend requests
+
+### In Progress<a name="inprogress"></a>
+
+- [ ] Private chat with your friends
+
+### Done ✓
+
+- [x] Sending friend requests
+- [x] Accepting/Rejecting friend request
+- [x] Cancel friend request
 
 ## Support <a name="support"></a>
 

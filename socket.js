@@ -1,4 +1,5 @@
-const messageController = require('./controllers/message.controller');
+const publicMessageController = require('./controllers/public-message.controller');
+const privateMessageController = require('./controllers/private-message.controller');
 
 const connected_users = {};
 
@@ -54,11 +55,14 @@ module.exports = io => {
     });
 
     socket.on('message', data => {
+      console.log(data);
       delete data.user.servers;
       delete data.user.createdAt;
 
       io.in(data.channelId).emit('new-message', data);
-      messageController.save(data);
+      data.isPrivate
+        ? privateMessageController.save(data)
+        : publicMessageController.save(data);
     });
 
     socket.on('delete-message', data => {
@@ -68,10 +72,6 @@ module.exports = io => {
 
     socket.on('leave-text-channel', () => {
       socket.rooms.forEach(room => socket.leave(room));
-    });
-
-    socket.on('send-files', data => {
-      io.in(data.channelId).emit('send-files', data);
     });
 
     socket.on('disconnected', data => {

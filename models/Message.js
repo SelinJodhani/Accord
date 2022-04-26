@@ -14,12 +14,6 @@ const publicMessageSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'PublicMessage',
     },
-    type: {
-      type: String,
-      required: true,
-      enum: ['Text', 'File'],
-      default: 'Text',
-    },
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
@@ -52,12 +46,6 @@ const privateMessageSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'PrivateMessage',
     },
-    type: {
-      type: String,
-      required: true,
-      enum: ['Text', 'File'],
-      default: 'Text',
-    },
     user1: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
@@ -88,12 +76,17 @@ publicMessageSchema.pre(/^find/, function (next) {
 privateMessageSchema.index({ createdAt: 1 }, { expireAfterSeconds: 172800 });
 privateMessageSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'user',
+    path: 'user1',
     select: '-__v -servers -email',
-  }).populate({
-    path: 'reply',
-    select: '-__v -reply',
-  });
+  })
+    .populate({
+      path: 'user2',
+      select: '-__v -servers -email',
+    })
+    .populate({
+      path: 'reply',
+      select: '-__v -reply',
+    });
   next();
 });
 

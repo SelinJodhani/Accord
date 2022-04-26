@@ -1,9 +1,8 @@
-const fs = require('fs');
+const createError = require('http-errors');
 
 const Channel = require('../models/Channel');
 const Server = require('../models/Server');
 const User = require('../models/User');
-const createError = require('http-errors');
 const catchAsync = require('../utils/catch.async');
 const { deleteServer } = require('../utils/delete.cascade');
 
@@ -24,7 +23,7 @@ exports.create = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id);
   const server = await Server.create({
     name: req.body.name,
-    image: req.file?.filename,
+    image: req.image ? req.image : undefined,
     author: req.user._id,
   });
   const channel = await Channel.create([
@@ -59,17 +58,12 @@ exports.create = catchAsync(async (req, res, next) => {
 exports.update = catchAsync(async (req, res, next) => {
   const server = await Server.findOneAndUpdate(
     { slug: req.params.serverSlug },
-    { name: req.body.name, image: req.file?.filename },
+    { name: req.body.name, image: req.image ? req.image : undefined },
     {
       new: false,
       runValidators: true,
     }
   );
-
-  if (req.file && server.image !== 'Accord.png')
-    await fs.promises.unlink(
-      `${__dirname}/../public/images/servers/${server.image}`
-    );
 
   return res.status(200).json({
     status: 'success',
@@ -83,11 +77,6 @@ exports.delete = catchAsync(async (req, res, next) => {
   const server = await Server.findOne({ slug: req.params.serverSlug });
 
   await deleteServer(server._id);
-
-  if (server.image !== 'Accord.png')
-    await fs.promises.unlink(
-      `${__dirname}/../public/images/servers/${server.image}`
-    );
 
   return res.status(204).json({
     status: 'success',

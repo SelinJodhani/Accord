@@ -5,8 +5,8 @@ const imageSchema = Joi.string().default('Accord.png');
 const emailSchema = Joi.string()
   .trim()
   .email({
-    minDomainSegments: 2,
-    tlds: { allow: ['com', 'email'] },
+    minDomainSegments: 1,
+    tlds: { allow: ['com'] },
   })
   .required()
   .label('Email');

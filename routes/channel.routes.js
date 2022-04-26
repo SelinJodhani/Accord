@@ -1,6 +1,6 @@
 const express = require('express');
 
-const messageRoutes = require('./message.routes');
+const messageRoutes = require('./public-message.routes');
 const channelController = require('../controllers/channel.controller');
 const serverMiddlewares = require('../middlewares/server.middleware');
 

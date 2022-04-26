@@ -1,8 +1,9 @@
-const catchAsync = require('../utils/catch.async');
 const createError = require('http-errors');
+
+const catchAsync = require('../utils/catch.async');
 const { FriendList, FriendRequest } = require('../models/Friend');
 
-const areFriends = (person1FriendList, person2FriendList) => {
+exports.areFriends = (person1FriendList, person2FriendList) => {
   return (
     person1FriendList.friends.includes(person2FriendList.user.toString()) &&
     person2FriendList.friends.includes(person1FriendList.user.toString())
@@ -53,7 +54,7 @@ exports.unfriend = catchAsync(async (req, res, next) => {
   if (remover === removee)
     return next(createError(400, 'How can you unfriend yourself?'));
 
-  if (!areFriends(removerFriendList, removeeFriendList)) {
+  if (!this.areFriends(removerFriendList, removeeFriendList)) {
     return next(
       new createError(
         400,
@@ -87,7 +88,7 @@ exports.send = catchAsync(async (req, res, next) => {
       createError(400, 'You cannot send friend request to yourself!')
     );
 
-  if (areFriends(senderFriendList, receiverFriendList)) {
+  if (this.areFriends(senderFriendList, receiverFriendList)) {
     return next(
       new createError(
         400,

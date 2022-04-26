@@ -1,6 +1,9 @@
 const express = require('express');
 
-const uploadImage = require('../middlewares/image.upload.middleware')('Server');
+const {
+  uploadImage,
+  uploadToCloud,
+} = require('../middlewares/image.upload.middlewares');
 const channelRoutes = require('./channel.routes');
 const serverController = require('../controllers/server.controller');
 
@@ -20,15 +23,21 @@ router.use('/:serverSlug/channels', channelRoutes);
 
 router
   .route('/')
-  .post(uploadImage, validator(createServerSchema), serverController.create);
+  .post(
+    validator(createServerSchema),
+    uploadImage,
+    uploadToCloud('Server'),
+    serverController.create
+  );
 
 router
   .route('/:serverSlug')
   .get(serverController.get)
   .patch(
-    uploadImage,
     validator(updateServerSchema),
     serverMiddlewares.checkServerAuthority,
+    uploadImage,
+    uploadToCloud('Server'),
     serverController.update
   )
   .delete(serverMiddlewares.checkServerAuthority, serverController.delete);

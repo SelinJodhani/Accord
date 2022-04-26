@@ -1,6 +1,7 @@
+const createError = require('http-errors');
+
 const Server = require('../models/Server');
 const catchAsync = require('../utils/catch.async');
-const createError = require('http-errors');
 
 exports.checkServerAuthority = catchAsync(async (req, res, next) => {
   const server = await Server.findOne({ slug: req.params.serverSlug });
