@@ -6,7 +6,10 @@ const { FriendList } = require('../models/Friend');
 
 const userSchema = new mongoose.Schema(
   {
-    name: String,
+    name: {
+      type: String,
+      required: [true, 'Name is required!'],
+    },
     image: {
       type: String,
       default:
@@ -15,12 +18,18 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       unique: true,
+      lowercase: true,
+      required: true,
     },
     password: {
       type: String,
+      required: [true, 'Password cannot be empty!'],
       select: false,
     },
-    passwordConfirm: String,
+    passwordConfirm: {
+      type: String,
+      required: [true, 'Confirm Password is required!'],
+    },
     servers: [
       {
         type: mongoose.Schema.ObjectId,

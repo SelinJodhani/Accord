@@ -5,7 +5,10 @@ mongoose.plugin(slug);
 
 const channelSchema = new mongoose.Schema(
   {
-    name: String,
+    name: {
+      type: String,
+      required: [true, 'Name is required!'],
+    },
     type: {
       type: String,
       enum: ['Text', 'Voice'],

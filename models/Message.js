@@ -40,7 +40,7 @@ const privateMessageSchema = new mongoose.Schema(
     message: {
       type: String,
       trim: true,
-      required: [true, 'PublicMessage cannot be empty!'],
+      required: [true, 'PrivateMessage cannot be empty!'],
     },
     reply: {
       type: mongoose.Schema.ObjectId,
