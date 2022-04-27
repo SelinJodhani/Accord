@@ -13,7 +13,6 @@ For development, you will only need Node.js and a node global package, installed
 - [Features](#features)
 - [Installation](#installation)
 - [Todo](#todo)
-- [InProgress](#inprogress)
 - [Support](#support)
 - [Contribute](#contribute)
 - [License](#license)
@@ -111,15 +110,12 @@ Open `./.env` then edit it with your settings. You will need:
 - [ ] Unfriend a friend
 - [ ] Implementation of socket for receiving real-time friend requests
 
-### In Progress<a name="inprogress"></a>
-
-- [ ] Private chat with your friends
-
 ### Done ✓
 
 - [x] Sending friend requests
 - [x] Accepting/Rejecting friend request
 - [x] Cancel friend request
+- [x] Private chat with your friends
 
 ## Support <a name="support"></a>
 
