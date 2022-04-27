@@ -55,9 +55,8 @@ module.exports = io => {
     });
 
     socket.on('message', data => {
-      console.log(data);
-      delete data.user.servers;
-      delete data.user.createdAt;
+      delete data?.user?.servers;
+      delete data?.user?.createdAt;
 
       io.in(data.channelId).emit('new-message', data);
       data.isPrivate
@@ -66,8 +65,10 @@ module.exports = io => {
     });
 
     socket.on('delete-message', data => {
-      io.in(data.data.channelId).emit('delete-message', data);
-      messageController.delete(data);
+      io.in(data.channelId).emit('delete-message', data);
+      data.isPrivate
+        ? privateMessageController.delete(data)
+        : publicMessageController.delete(data);
     });
 
     socket.on('leave-text-channel', () => {

@@ -12,22 +12,19 @@ exports.save = async data => {
     _id: new mongoose.mongo.ObjectId(data._id),
     message: data.message,
     reply: data.reply?._id,
-    user1: data.sender,
-    user2: data.receiver,
+    user1: data.user1._id,
+    user2: data.user2._id,
     createdAt: data.createdAt,
   });
 };
 
-// exports.delete = async data => {
-//   const server = await Server.findById(data.data.serverId);
-//   const message = await PublicMessage.findById(data.data._id);
+exports.delete = async data => {
+  const message = await PrivateMessage.findById(data._id);
 
-//   if (
-//     data.user._id === message.user._id.toString() ||
-//     server.author._id.toString() === data.user._id
-//   )
-//     await PublicMessage.findByIdAndDelete(data.data._id);
-// };
+  if (message)
+    if (data.user1._id === message.user1._id.toString())
+      await PrivateMessage.findByIdAndDelete(message._id);
+};
 
 exports.all = catchAsync(async (req, res, next) => {
   const user1FriendList = await FriendList.findOne({
@@ -44,7 +41,10 @@ exports.all = catchAsync(async (req, res, next) => {
     return next(createError(400, 'You are not friends with the other person!'));
 
   const messages = await PrivateMessage.find({
-    $and: [{ user1: req.user._id }, { user2: req.params.receiver }],
+    $or: [
+      { $and: [{ user1: req.user._id }, { user2: req.params.receiver }] },
+      { $and: [{ user1: req.params.receiver }, { user2: req.user._id }] },
+    ],
   }).sort('createdAt');
 
   return res.status(200).json({
