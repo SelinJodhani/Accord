@@ -33,6 +33,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.4",
     "mongoose-slug-updater": "^2.2.0",
+    "morgan": "^1.10.0",
     "multer": "^1.4.4",
     "nodemailer": "^6.7.2",
     "npm": "^8.5.5",
@@ -40,7 +41,6 @@
     "validator": "^13.7.0"
   },
   "devDependencies": {
-    "morgan": "^1.10.0",
     "nodemon": "^2.0.15"
   }
 }
