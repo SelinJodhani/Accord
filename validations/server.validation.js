@@ -1,11 +1,6 @@
 const Joi = require('joi');
 
-const nameSchema = Joi.string()
-  .trim()
-  .min(3)
-  .max(15)
-  .required()
-  .label('Server Name');
+const nameSchema = Joi.string().trim().min(3).max(15).label('Server Name');
 
 const imageSchema = Joi.string().default('Accord.png');
 

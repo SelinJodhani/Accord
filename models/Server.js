@@ -7,7 +7,7 @@ const serverSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, 'Name is required!'],
+      required: [true, 'Server Name is required!'],
     },
     slug: {
       type: String,

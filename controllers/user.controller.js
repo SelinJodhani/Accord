@@ -1,8 +1,11 @@
 const createError = require('http-errors');
 
 const User = require('../models/User');
+const { FriendList, FriendRequest } = require('../models/Friend');
+
 const catchAsync = require('../utils/catch.async');
 const { deleteUser } = require('../utils/delete.cascade');
+const { areFriends } = require('./friend.controller');
 
 exports.get = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.params.id).select('-servers');
@@ -34,14 +37,39 @@ exports.find = catchAsync(async (req, res, next) => {
 });
 
 exports.search = catchAsync(async (req, res, next) => {
+  let updatedUsers = [];
   const { search } = req.query;
 
   const users = await User.find({ name: { $regex: search, $options: 'i' } });
+  const loggedinUserFriendList = await FriendList.findOne({
+    user: req.user._id,
+  });
+
+  for (let user of users) {
+    const otherUserFriendList = await FriendList.findOne({ user: user._id });
+
+    if (areFriends(loggedinUserFriendList, otherUserFriendList)) {
+      updatedUsers.push({ ...user, friend_request_status: 'friends' });
+      continue;
+    }
+
+    const friendRequest = await FriendRequest.findOne({
+      $and: [
+        { sender: req.user._id },
+        { receiver: user._id },
+        { isActive: true },
+      ],
+    });
+
+    friendRequest
+      ? updatedUsers.push({ ...user, friend_request_status: 'pending' })
+      : updatedUsers.push({ ...user, friend_request_status: 'not_sent' });
+  }
 
   return res.status(200).json({
     status: 'success',
     data: {
-      users,
+      users: updatedUsers,
     },
   });
 });
