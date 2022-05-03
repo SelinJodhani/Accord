@@ -58,7 +58,7 @@ module.exports = io => {
       delete data?.user?.servers;
       delete data?.user?.createdAt;
 
-      io.in(data.channelId).emit('new-message', data);
+      socket.broadcast.to(data.channelId).emit('new-message', data);
       data.isPrivate
         ? privateMessageController.save(data)
         : publicMessageController.save(data);
@@ -78,10 +78,9 @@ module.exports = io => {
     socket.on('disconnected', data => {
       removeUser(data);
 
-      io.in(data.channelId).emit(
-        'update-ui',
-        connected_users[data.channelId]?.users
-      );
+      socket.broadcast
+        .to(data.channelId)
+        .emit('update-ui', connected_users[data.channelId]?.users);
       socket.disconnect();
     });
   });

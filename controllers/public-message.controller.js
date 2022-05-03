@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 
 const Channel = require('../models/Channel');
-const { PublicMessage } = require('../models/Message');
 const Server = require('../models/Server');
+const { PublicMessage } = require('../models/Message');
+
 const catchAsync = require('../utils/catch.async');
 
 exports.save = async data => {
@@ -10,7 +11,6 @@ exports.save = async data => {
     _id: new mongoose.mongo.ObjectId(data._id),
     message: data.message,
     reply: data.reply?._id,
-    type: data.type,
     user: data.user._id,
     channelId: data.channelId,
     serverId: data.serverId,
@@ -19,14 +19,15 @@ exports.save = async data => {
 };
 
 exports.delete = async data => {
-  const server = await Server.findById(data.data.serverId);
-  const message = await PublicMessage.findById(data.data._id);
+  const server = await Server.findById(data.serverId);
+  const message = await PublicMessage.findById(data._id);
 
-  if (
-    data.user._id === message.user._id.toString() ||
-    server.author._id.toString() === data.user._id
-  )
-    await PublicMessage.findByIdAndDelete(data.data._id);
+  if (message)
+    if (
+      data.user._id === message.user._id.toString() ||
+      server.author._id.toString() === data.user._id
+    )
+      await PublicMessage.findByIdAndDelete(message._id);
 };
 
 exports.all = catchAsync(async (req, res, next) => {

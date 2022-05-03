@@ -7,8 +7,8 @@
     "node": "16.14.2"
   },
   "scripts": {
-    "start:dev": "nodemon server.js",
-    "start": "node server.js"
+    "start:dev": "set NODE_ENV=development && nodemon server.js",
+    "start": "set NODE_ENV=production && node server.js"
   },
   "repository": {
     "type": "git",
