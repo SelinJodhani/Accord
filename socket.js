@@ -64,6 +64,10 @@ module.exports = io => {
         : publicMessageController.save(data);
     });
 
+    socket.on('send-files', data => {
+      io.in(data.channelId).emit('send-files', data);
+    });
+
     socket.on('delete-message', data => {
       io.in(data.channelId).emit('delete-message', data);
       data.isPrivate
