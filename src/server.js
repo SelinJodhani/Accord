@@ -1,4 +1,3 @@
-require('dotenv').config();
 require('mongoose').connect(process.env.MONGO_CONNECTION_STRING);
 
 require('cloudinary').v2.config({

@@ -1,0 +1,5 @@
+{
+  "verbose": true,
+  "watch": "src/**/*",
+  "exec": "node -r dotenv/config src/server.js"
+}
