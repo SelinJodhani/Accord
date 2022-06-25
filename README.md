@@ -89,13 +89,33 @@ If you need to update `npm`, you can make it using `npm`! Cool right? After runn
     $ cd Accord
     $ npm install
 
+## Run using docker compose
+
+Install [Docker](https://docs.docker.com/desktop/) on your local machine and then run:
+
+      $ docker compose up
+
+OR
+
+      $ docker-compose up
+
+
 ## Configure app
 
 Open `./.env` then edit it with your settings. You will need:
 
+###### Server
+
+- PORT;
 - MONGO_CONNECTION_STRING;
 - JWT_SECRET;
 - JWT_EXPIRES_IN;
+
+###### Cloudinary credentials
+
+- CLOUD_NAME;
+- API_KEY;
+- API_SECRET;
 
 ## Running the project
 
