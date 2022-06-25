@@ -4,8 +4,8 @@
   "description": "Discord clone made using node, express.",
   "main": "src/server.js",
   "scripts": {
-    "start:dev": "nodemon",
-    "start": "node -r dotenv/config src/server.js"
+    "start:dev": "node init && nodemon",
+    "start": "node init && node -r dotenv/config src/server.js"
   },
   "repository": {
     "type": "git",
